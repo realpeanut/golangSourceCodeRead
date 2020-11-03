@@ -1,4 +1,4 @@
 - [从缓存中读取一个字节](https://github.com/realpeanut/golangSourceCodeRead/blob/main/bufio/bufio_01.md)
 - [读取buf所有数据](https://github.com/realpeanut/golangSourceCodeRead/blob/main/bufio/bufio_02.md)
 - [读取分割符之前的数据](https://github.com/realpeanut/golangSourceCodeRead/blob/main/bufio/bufio_03.md)
-
+- [读取指定字节，但是下次仍能读取到](https://github.com/realpeanut/golangSourceCodeRead/blob/main/bufio/bufio_04.md)

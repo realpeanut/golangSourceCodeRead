@@ -122,6 +122,42 @@ func main()  {
 	res,_:=r.ReadSlice('\n')
 	fmt.Println(res)
 }
+
+/**
+	//读取指定字节，但是不更新b.r，下次仍然能读取的到，前提是读取小于buf len
+
+	func (b *Reader) Peek(n int) ([]byte, error) {
+		if n < 0 {
+			return nil, ErrNegativeCount
+		}
+
+		b.lastByte = -1
+		b.lastRuneSize = -1
+
+		//可读小于n & 缓存未满  此时填充数据
+		for b.w-b.r < n && b.w-b.r < len(b.buf) && b.err == nil {
+			b.fill() // b.w-b.r < len(b.buf) => buffer is not full
+		}
+
+
+		if n > len(b.buf) {
+			return b.buf[b.r:b.w], ErrBufferFull
+		}
+
+		// 0 <= n <= len(b.buf)
+		var err error
+		if avail := b.w - b.r; avail < n {
+			// not enough data in buffer
+			n = avail
+			err = b.readErr()
+			if err == nil {
+				err = ErrBufferFull
+			}
+		}
+		return b.buf[b.r : b.r+n], err
+	}
+ */
+
 /**
 	读取指定分割符之前的所有字节
 	例如读取\n之前的所有数据
