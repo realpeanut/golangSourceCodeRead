@@ -6,6 +6,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"net"
 )
 
@@ -118,8 +119,65 @@ func main()  {
 	var b = []byte("$2\r\n$3\r\nget\r\n$1a\r\n")
 	_,_ = conn.Write(b)
 	r := bufio.NewReader(conn)
-	_,_=r.Read(make([]byte,4096))
+	res,_:=r.ReadSlice('\n')
+	fmt.Println(res)
 }
+/**
+	读取指定分割符之前的所有字节
+	例如读取\n之前的所有数据
+
+	func (b *Reader) ReadSlice(delim byte) (line []byte, err error) {
+		s := 0
+		//循环读取数据遍历
+		for {
+			//搜索指定byte
+			if i := bytes.IndexByte(b.buf[b.r+s:b.w], delim); i >= 0 {
+                //返回未读buf到i+s的字节数据
+				i += s
+				line = b.buf[b.r : b.r+i+1]
+				b.r += i + 1
+				break
+			}
+
+			// 未找到返回buf所有未读数据，返回error
+			if b.err != nil {
+				line = b.buf[b.r:b.w]
+				b.r = b.w
+				err = b.readErr()
+				break
+			}
+
+			// 未读大于等于缓存大小，说明没有找到，将返回所有buf缓存，所有判断查找失败应该看err,而不是line有没有数据
+			if b.Buffered() >= len(b.buf) {
+				b.r = b.w
+				line = b.buf
+				err = ErrBufferFull
+				break
+			}
+
+			s = b.w - b.r // do not rescan area we scanned before
+
+			b.fill() // buffer is not full
+		}
+
+		// Handle last byte, if any.
+		if i := len(line) - 1; i >= 0 {
+			b.lastByte = int(line[i])
+			b.lastRuneSize = -1
+		}
+
+	return
+}
+
+
+// IndexByte returns the index of the first instance of c in b, or -1 if c is not present in b.
+func IndexByte(b []byte, c byte) int {
+	return bytealg.IndexByte(b, c)
+}
+ */
+
+
+
 
 /**
 	读取缓存区所有数据 缓存区最大为4096byte，直接读取4096byte即可
@@ -128,9 +186,6 @@ func main()  {
 	_,_ = conn.Write(b)
 	r := bufio.NewReader(conn)
 	_,_=r.Read(make([]byte,4096))
-
-
-
 	//
 	func (b *Reader) Read(p []byte) (n int, err error) {
 		n = len(p)
